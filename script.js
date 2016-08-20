@@ -42,8 +42,39 @@ var ANCESTRY_FILE = "[\n  " + [
 
 var ancestry = JSON.parse(ANCESTRY_FILE);
 
+// average function takes an array as an argument
 function average(array) {
+    // within the function is another function which takes two arguments and returns the total
     function plus(a, b) { return a + b; }
+    // average returns the array after reduce has been applied. reduce produces one value after adding every number
+    // in the array (via the plus function) but then what is returned is divided by the array length in order to get
+    // the average
     return array.reduce(plus) / array.length;
 }
 
+ // groupBy function takes two arguments
+function groupBy(array, groupOf) {
+    // groups is an empty object
+    var groups = {};
+    // forEach mean it will go through each element in the array that is passed as an argument
+    array.forEach(function(element) {
+        // groupName is the individual element of the array
+        var groupName = groupOf(element);
+        if (groupName in groups)
+            groups[groupName].push(element);
+        else
+            groups[groupName] = [element];
+    });
+    return groups;
+}
+
+var byCentury = groupBy(ancestry, function(person) {
+    return Math.ceil(person.died / 100);
+});
+
+for (var century in byCentury) {
+    var ages = byCentury[century].map(function(person) {
+        return person.died - person.born;
+    });
+    console.log(century + ": " + average(ages));
+}
