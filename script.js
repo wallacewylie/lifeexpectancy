@@ -60,21 +60,34 @@ function groupBy(array, groupOf) {
     array.forEach(function(element) {
         // groupName is the individual element of the array
         var groupName = groupOf(element);
+        // if groupName is already a group (in groups), then push it to that array which is stored in the groups
+        // object
         if (groupName in groups)
             groups[groupName].push(element);
+        // if not, create a new array by that name and put it in the groups object
         else
             groups[groupName] = [element];
     });
+    // return the groups object
     return groups;
 }
 
+// byCentury takes the ancestry array as an argument, and a function which takes the century a person died, divides
+// it by one hundred and returns that number using Math.ceil which returns the smallest integer greater than or equal
+// to a given number
 var byCentury = groupBy(ancestry, function(person) {
     return Math.ceil(person.died / 100);
 });
 
+// for loop which loops through each century in byCentury
 for (var century in byCentury) {
+    // ages variable takes byCentury and then takes each person in each century and applies the map function
     var ages = byCentury[century].map(function(person) {
+        // map function returns new vales stored in ages which is the person age, found by subtracting their birth
+        // year from their death year
         return person.died - person.born;
     });
+    // console log takes the century and then uses the average function to find the average age, using the ages
+    // variable
     console.log(century + ": " + average(ages));
 }
